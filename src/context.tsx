@@ -22,12 +22,26 @@ export interface IWithContextProps {
   context: IAppContext;
 }
 
-export function withContext<ComposedComponentProps extends IWithContextProps>(
-  ComposedComponent: React.ComponentType<ComposedComponentProps>
-) {
-  return (props: ComposedComponentProps) => (
-    <ContextConsumer>
-      {context => <ComposedComponent {...props} context={context} />}
-    </ContextConsumer>
-  );
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+export function withContext<P extends IWithContextProps>(
+  ComposedComponent: React.ComponentClass<P> | React.FunctionComponent<P>
+): React.ComponentClass<Omit<P, keyof IWithContextProps>> {
+  return class WithContext extends React.Component<
+    Omit<P, keyof IWithContextProps>
+  > {
+    public render(): React.ReactNode {
+      return (
+        <ContextConsumer>
+          {context => <ComposedComponent {...this.props} context={context} />}
+        </ContextConsumer>
+      );
+    }
+  };
+
+  // return (props: Omit<P, keyof IWithContextProps>) => (
+  //   <ContextConsumer>
+  //     {context => <ComposedComponent {...props} context={context} />}
+  //   </ContextConsumer>
+  // );
 }

@@ -20,6 +20,4 @@ class SearchResultsComponent extends React.Component<IWithContextProps, {}> {
   }
 }
 
-export const SearchResults = withContext<IWithContextProps>(
-  SearchResultsComponent
-);
+export const SearchResults = withContext(SearchResultsComponent);
