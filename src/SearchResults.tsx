@@ -1,23 +1,51 @@
 import * as React from "react";
-import { ContextConsumer, IWithContextProps, withContext } from "./context";
+import { IWithContextProps, withContext } from "./context";
+import { SearchResultItem } from "./SearchResultItem";
 
-class SearchResultsComponent extends React.Component<IWithContextProps, {}> {
+class SearchResultsComponent extends React.Component<
+  Partial<IWithContextProps>
+> {
+  public componentDidMount(): void {
+    this.setResults();
+  }
+
   public render(): React.ReactNode {
+    if (!this.props.context) {
+      return null;
+    }
+
     return (
-      <ContextConsumer>
-        {context => (
-          <div>
-            {context.results.map(({ path, content }) => (
-              <div key={path}>
-                <div>{path}</div>
-                <code>{content}</code>
-              </div>
-            ))}
-          </div>
-        )}
-      </ContextConsumer>
+      <ul>
+        {this.props.context.results.map(item => (
+          <li key={item.path}>
+            <SearchResultItem {...item} />
+          </li>
+        ))}
+      </ul>
     );
   }
+
+  private setResults = () => {
+    if (this.props.context) {
+      this.props.context.setResults([
+        {
+          path: "path/1"
+        },
+        {
+          path: "path/2"
+        },
+        {
+          path: "path/3"
+        },
+        {
+          path: "path/4"
+        },
+        {
+          path: "path/5"
+        }
+      ]);
+    }
+  };
 }
 
 export const SearchResults = withContext(SearchResultsComponent);

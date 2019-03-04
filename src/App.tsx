@@ -10,6 +10,7 @@ import { ISearchResult } from "./types";
 interface IState {
   results: ISearchResult[];
   setResults: (results: ISearchResult[]) => void;
+  setResultContent: (pathToUpdate: string, newContent: string) => void;
 }
 
 class App extends React.Component<{}, IState> {
@@ -18,6 +19,8 @@ class App extends React.Component<{}, IState> {
       <ContextProvider
         value={{
           ...defaultValue,
+          ...this.state,
+          setResultContent: this.setResultContent,
           setResults: this.setResults
         }}
       >
@@ -32,9 +35,19 @@ class App extends React.Component<{}, IState> {
     );
   }
 
-  private setResults(results: ISearchResult[]): void {
+  private setResults = (results: ISearchResult[]) => {
     this.setState({ results });
-  }
+  };
+
+  private setResultContent = (pathToUpdate: string, newContent: string) => {
+    this.setState(({ results }) => ({
+      results: results.map(({ path, content }) =>
+        path === pathToUpdate
+          ? { path, content: newContent }
+          : { path, content }
+      )
+    }));
+  };
 }
 
 export default App;

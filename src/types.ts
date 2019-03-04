@@ -1,4 +1,4 @@
 export interface ISearchResult {
-  path: string
-  content: string
+  path: string;
+  content?: string;
 }

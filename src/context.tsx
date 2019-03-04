@@ -4,10 +4,14 @@ import { ISearchResult } from "./types";
 export interface IAppContext {
   results: ISearchResult[];
   setResults: (results: ISearchResult[]) => void;
+  setResultContent: (pathToUpdate: string, newContent: string) => void;
 }
 
 export const defaultValue: IAppContext = {
   results: [],
+  setResultContent: () => {
+    /* noop */
+  },
   setResults: () => {
     /*noop*/
   }
@@ -22,14 +26,10 @@ export interface IWithContextProps {
   context: IAppContext;
 }
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-export function withContext<P extends IWithContextProps>(
-  ComposedComponent: React.ComponentClass<P> | React.FunctionComponent<P>
-): React.ComponentClass<Omit<P, keyof IWithContextProps>> {
-  return class WithContext extends React.Component<
-    Omit<P, keyof IWithContextProps>
-  > {
+export function withContext<P extends {}>(
+  ComposedComponent: React.ComponentType<P>
+): React.ComponentClass<P> {
+  return class WithContext extends React.Component<P> {
     public render(): React.ReactNode {
       return (
         <ContextConsumer>
@@ -38,10 +38,4 @@ export function withContext<P extends IWithContextProps>(
       );
     }
   };
-
-  // return (props: Omit<P, keyof IWithContextProps>) => (
-  //   <ContextConsumer>
-  //     {context => <ComposedComponent {...props} context={context} />}
-  //   </ContextConsumer>
-  // );
 }
