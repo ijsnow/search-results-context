@@ -1,4 +1,5 @@
 import * as React from "react";
+import { fetchResultContent } from "./actions";
 import { IWithContextProps, withContext } from "./context";
 
 interface IProps extends Partial<IWithContextProps> {
@@ -22,9 +23,11 @@ class SearchResultItemComponent extends React.Component<IProps> {
 
   private setResultContent = () => {
     if (this.props.context) {
-      this.props.context.setResultContent(
-        this.props.path,
-        "foo bar baz foo bar baz foo bar baz foo bar baz foo bar baz foo bar baz foo bar baz foo bar baz foo bar baz foo bar baz foo bar baz "
+      this.props.context.update(
+        fetchResultContent(
+          this.props.path,
+          "foo bar baz foo bar baz foo bar baz"
+        )
       );
     }
   };

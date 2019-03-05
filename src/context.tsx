@@ -1,23 +1,16 @@
 import * as React from "react";
 import { ISearchResult } from "./types";
 
-export interface IAppContext {
+export interface IAppState {
   results: ISearchResult[];
-  setResults: (results: ISearchResult[]) => void;
-  setResultContent: (pathToUpdate: string, newContent: string) => void;
 }
 
-export const defaultValue: IAppContext = {
-  results: [],
-  setResultContent: () => {
-    /* noop */
-  },
-  setResults: () => {
-    /*noop*/
-  }
-};
+export interface IAppContext {
+  state: IAppState;
+  update: (fn: (state: IAppState) => Partial<IAppState>) => void;
+}
 
-const appContext = React.createContext<IAppContext>(defaultValue);
+const appContext = React.createContext<IAppContext | null>(null);
 
 export const ContextProvider = appContext.Provider;
 export const ContextConsumer = appContext.Consumer;
@@ -33,7 +26,9 @@ export function withContext<P extends {}>(
     public render(): React.ReactNode {
       return (
         <ContextConsumer>
-          {context => <ComposedComponent {...this.props} context={context} />}
+          {context =>
+            context && <ComposedComponent {...this.props} context={context} />
+          }
         </ContextConsumer>
       );
     }

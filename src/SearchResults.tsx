@@ -1,4 +1,5 @@
 import * as React from "react";
+import { fetchResults } from "./actions";
 import { IWithContextProps, withContext } from "./context";
 import { SearchResultItem } from "./SearchResultItem";
 
@@ -16,7 +17,7 @@ class SearchResultsComponent extends React.Component<
 
     return (
       <ul>
-        {this.props.context.results.map(item => (
+        {this.props.context.state.results.map(item => (
           <li key={item.path}>
             <SearchResultItem {...item} />
           </li>
@@ -27,23 +28,7 @@ class SearchResultsComponent extends React.Component<
 
   private setResults = () => {
     if (this.props.context) {
-      this.props.context.setResults([
-        {
-          path: "path/1"
-        },
-        {
-          path: "path/2"
-        },
-        {
-          path: "path/3"
-        },
-        {
-          path: "path/4"
-        },
-        {
-          path: "path/5"
-        }
-      ]);
+      this.props.context.update(fetchResults);
     }
   };
 }

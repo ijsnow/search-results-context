@@ -3,14 +3,12 @@ import "./App.css";
 
 import logo from "./logo.svg";
 
-import { ContextProvider, defaultValue } from "./context";
+import { ContextProvider, IAppContext } from "./context";
 import { SearchResults } from "./SearchResults";
 import { ISearchResult } from "./types";
 
 interface IState {
   results: ISearchResult[];
-  setResults: (results: ISearchResult[]) => void;
-  setResultContent: (pathToUpdate: string, newContent: string) => void;
 }
 
 class App extends React.Component<{}, IState> {
@@ -18,10 +16,8 @@ class App extends React.Component<{}, IState> {
     return (
       <ContextProvider
         value={{
-          ...defaultValue,
-          ...this.state,
-          setResultContent: this.setResultContent,
-          setResults: this.setResults
+          state: this.state,
+          update: this.updateContext
         }}
       >
         <div className="App">
@@ -35,18 +31,15 @@ class App extends React.Component<{}, IState> {
     );
   }
 
-  private setResults = (results: ISearchResult[]) => {
-    this.setState({ results });
-  };
+  private updateContext: IAppContext["update"] = fn => {
+    this.setState(state => {
+      const update = fn(state);
 
-  private setResultContent = (pathToUpdate: string, newContent: string) => {
-    this.setState(({ results }) => ({
-      results: results.map(({ path, content }) =>
-        path === pathToUpdate
-          ? { path, content: newContent }
-          : { path, content }
-      )
-    }));
+      return {
+        ...state,
+        ...update
+      };
+    });
   };
 }
 
